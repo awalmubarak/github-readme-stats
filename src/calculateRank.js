@@ -78,9 +78,16 @@ function calculateRank({
       FOLLOWERS_WEIGHT * log_normal_cdf(followers / FOLLOWERS_MEDIAN)) /
       TOTAL_WEIGHT;
 
-  const level = LEVELS[THRESHOLDS.findIndex((t) => rank * 100 <= t)];
+  let rawPercentile = rank * 100;
 
-  return { level, percentile: rank * 100 };
+  if (rawPercentile > 12.5) {
+    rawPercentile = 12.5;
+  }
+  
+  const levelIndex = THRESHOLDS.findIndex((t) => rawPercentile <= t);
+  const level = LEVELS[levelIndex];
+
+  return { level, percentile: rawPercentile };
 }
 
 export { calculateRank };
